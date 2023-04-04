@@ -4,18 +4,20 @@ import { useEffect } from "react";
 
 function App() {
   const dispatch = useDispatch();
+  const { users, isLoading, error, reqStatus } = useSelector(state => state);
   useEffect(() => {
-    dispatch(fetchUsers());
-  }, [])
-  const { users, isLoading, error } = useSelector(state => state);
+    if(reqStatus === 'idle'){
+      dispatch(fetchUsers());
+    }
+  }, [reqStatus, dispatch])
   return (
     <>
-      {isLoading && <p>is loading</p>}
-      {error && <p>Error</p>}
+      {reqStatus === 'loading' && <p>is loading</p>}
+      {reqStatus === 'rejected' && <p>Something went wrong</p>}
       {users.map(user => {
         return (
           <ul key={user.firstName}>
-            <li >{user.firstName} {user.lastName}</li>
+            <li >{user.name.title}. {user.name.first} {user.name.last}</li>
           </ul>
         )
       })}
